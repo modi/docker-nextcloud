@@ -1,0 +1,66 @@
+version: "3"
+services:
+  # https://hub.docker.com/_/nextcloud
+  app:
+    image: nextcloud:${X_NEXTCLOUD_TAG:-28.0.3}-fpm
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NEXTCLOUD_DATA_DIR: /data
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${X_MYSQL_DATABASE:-nextcloud}
+      MYSQL_USER: ${X_MYSQL_USER:-nextcloud}
+      MYSQL_PASSWORD: ${X_MYSQL_PASSWORD:-nextcloud}
+    volumes:
+      - nextcloud:/var/www/html
+      - ./apps:/var/www/html/custom_apps
+      - ./config:/var/www/html/config
+      - ./data:/data
+  # https://hub.docker.com/_/mysql
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${X_MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${X_MYSQL_DATABASE:-nextcloud}
+      MYSQL_USER: ${X_MYSQL_USER:-nextcloud}
+      MYSQL_PASSWORD: ${X_MYSQL_PASSWORD:-nextcloud}
+      LANG: C.UTF-8
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./docker/mysql/zz-00.cnf:/etc/mysql/conf.d/zz-00.cnf:ro
+      - mysql_data:/var/lib/mysql
+  nginx:
+    image: nginx:1.24-alpine
+    depends_on:
+      - app
+    ports:
+      - 8089:80
+    volumes:
+      - nextcloud:/var/www/html
+      - ./docker/nginx/nextcloud.conf:/etc/nginx/nginx.conf:ro
+  # https://hub.docker.com/_/redis
+  redis:
+    image: redis:6.2-alpine
+    command: ["redis-server", "--requirepass", "${X_REDIS_PASSWORD:-NOT_SAFE}"]
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis_data:/data
+volumes:
+  mysql_data:
+    driver: local
+  nextcloud:
+    driver: local
+  redis_data:
+    driver: local
