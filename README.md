@@ -25,18 +25,9 @@
 
 ## 调整配置
 
-参考：
+加载默认配置：`./load-default-configs.sh`。
 
-```
-<?php
-$config = array(
-  # 将维护窗口设置为：16:00am UTC - 20:00am UTC
-  # https://docs.nextcloud.com/server/28/admin_manual/configuration_server/background_jobs_configuration.html#maintenance-window-start
-  'maintenance_window_start' => 18,
-  'overwrite.cli.url' => 'http://x.x.x.x:yyyy',
-  'updatechecker' => false,
-);
-```
+或手动配置，修改 `config/config.php`。
 
 ## 管理应用
 
@@ -61,6 +52,7 @@ $config = array(
 - Calendar 应用的版本历史：https://apps.nextcloud.com/apps/calendar/releases
 - NextCloud Office 应用的版本历史：https://apps.nextcloud.com/apps/richdocuments/releases
 - 配置项 `has_internet_connection`
+- 配置项 `['overwrite.cli.url' => 'http://x.x.x.x:yyyy']`,
 
 ## XXX
 
