@@ -1,3 +1,5 @@
 .env
-/apps
+docker-compose.override.yml
 /config
+/custom_apps
+/data

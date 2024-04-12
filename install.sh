@@ -7,6 +7,6 @@ fi
 
 set -eux
 
-sudo mkdir data && sudo chown 33:33 data
+sudo mkdir config custom_apps data && sudo chown 33:33 data
 
 docker compose up -d

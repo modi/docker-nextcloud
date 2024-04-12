@@ -10,4 +10,4 @@ set -eux
 
 docker compose down -v
 
-sudo rm -rf apps/ config/ data/
+sudo rm -rf config custom_apps data

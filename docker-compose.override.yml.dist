@@ -1,0 +1,10 @@
+version: "3"
+services:
+  collabora:
+    environment:
+      extra_params: "--o:ssl.enable=false"
+    ports:
+      - 9980:9980
+  nginx:
+    ports:
+      - 8089:80

@@ -2,7 +2,7 @@ version: "3"
 services:
   # https://hub.docker.com/_/nextcloud
   app:
-    image: nextcloud:${X_NEXTCLOUD_TAG:-28.0.3}-fpm
+    image: nextcloud:${X_NEXTCLOUD_IMAGE_TAG:-28.0.3-fpm}
     depends_on:
       mysql:
         condition: service_healthy
@@ -19,11 +19,18 @@ services:
       REDIS_HOST_PORT: 6379
       REDIS_HOST_PASSWORD: ${X_REDIS_PASSWORD:-NOT_SAFE}
       OVERWRITEPROTOCOL: ${X_PROTOCOL:-http}
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.nextcloud.schedule: "@every 5m"
+      ofelia.job-exec.nextcloud.command: "php cron.php"
+      ofelia.job-exec.nextcloud.user: www-data
     volumes:
       - nextcloud:/var/www/html
-      - ./apps:/var/www/html/custom_apps
+      - ./custom_apps:/var/www/html/custom_apps
       - ./config:/var/www/html/config
       - ./data:/data
+  collabora:
+    image: collabora/code:${X_COLLABORA_IMAGE_TAG:-23.05.10.1.1}
   # https://hub.docker.com/_/mysql
   mysql:
     image: mysql:8.0
@@ -46,11 +53,17 @@ services:
     image: nginx:1.24-alpine
     depends_on:
       - app
-    ports:
-      - 8089:80
     volumes:
       - nextcloud:/var/www/html
+      - ./custom_apps:/var/www/html/custom_apps:ro
       - ./docker/nginx/nextcloud.conf:/etc/nginx/nginx.conf:ro
+  ofelia:
+    image: mcuadros/ofelia:0.3.10
+    command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
+    depends_on:
+      - app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
   # https://hub.docker.com/_/redis
   redis:
     image: redis:6.2-alpine
