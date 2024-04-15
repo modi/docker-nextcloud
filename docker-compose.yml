@@ -24,6 +24,7 @@ services:
       ofelia.job-exec.nextcloud.schedule: "@every 5m"
       ofelia.job-exec.nextcloud.command: "php cron.php"
       ofelia.job-exec.nextcloud.user: www-data
+    restart: unless-stopped
     volumes:
       - nextcloud:/var/www/html
       - ./custom_apps:/var/www/html/custom_apps
@@ -45,6 +46,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
+    restart: unless-stopped
     volumes:
       - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d:ro
       - ./docker/mysql/zz-00.cnf:/etc/mysql/conf.d/zz-00.cnf:ro
@@ -53,6 +55,7 @@ services:
     image: nginx:1.24-alpine
     depends_on:
       - app
+    restart: unless-stopped
     volumes:
       - nextcloud:/var/www/html
       - ./custom_apps:/var/www/html/custom_apps:ro
@@ -62,6 +65,7 @@ services:
     command: daemon --docker -f label=com.docker.compose.project=${COMPOSE_PROJECT_NAME}
     depends_on:
       - app
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
   # https://hub.docker.com/_/redis
@@ -75,6 +79,7 @@ services:
       interval: 3s
       timeout: 3s
       retries: 3
+    restart: unless-stopped
     volumes:
       - redis_data:/data
 volumes:
