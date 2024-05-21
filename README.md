@@ -57,3 +57,5 @@
 ## XXX
 
     docker compose exec -u www-data app ./occ --help
+    docker compose exec -u www-data app ./occ config:list all
+    docker compose exec -u www-data app ./occ config:list richdocuments

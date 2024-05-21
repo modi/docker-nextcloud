@@ -1,4 +1,3 @@
-version: "3"
 services:
   # https://hub.docker.com/_/nextcloud
   app:
@@ -30,8 +29,6 @@ services:
       - ./custom_apps:/var/www/html/custom_apps
       - ./config:/var/www/html/config
       - ./data:/data
-  collabora:
-    image: collabora/code:${X_COLLABORA_IMAGE_TAG:-23.05.10.1.1}
   # https://hub.docker.com/_/mysql
   mysql:
     image: mysql:8.0

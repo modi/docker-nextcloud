@@ -1,10 +1,12 @@
 version: "3"
 services:
+  app:
+    depends_on:
+      - collabora
   collabora:
+    image: collabora/code:${X_COLLABORA_IMAGE_TAG:-24.04.2.1.1}
     environment:
       extra_params: "--o:ssl.enable=false"
-    ports:
-      - 9980:9980
   nginx:
     ports:
-      - 8089:80
+      - 80:80
